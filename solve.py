@@ -8,14 +8,14 @@ def debug(s):
 		print(s)
 
 opts = []
-actions = { '+':'addition', \
-            '-':'substract',\
-            '*':'product',  \
-            '/':'division', \
-            'X':'exchange', \
-            'A':'append',   \
-            'S':'alter_sign'\
-            }
+actions = { 'addition'  :'+', \
+            'substract' :'-', \
+            'product'   :'*', \
+            'division'  :'/', \
+            'exchange'  :'X', \
+            'append'    :'A', \
+            'alter_sign':'S', \
+			'shift_left':'L'  }
 
 # Format: +5 -5 *5 /5 X144->50 A5 S
 
@@ -23,21 +23,24 @@ source, target, steps = [int(a) for a in argv[1:4]]
 def addOptionNode(l,op):
 	debug("Adding op "+op)
 	id = op[0]
-	if id == '+':
+	if id == actions['addition']:
 		l.append((lambda x: x + int(op.split(id)[1]),op))
-	elif id == '*':
+	elif id == actions['product']:
 		l.append((lambda x: x * int(op.split(id)[1]),op))
-	elif id == '/':
+	elif id == actions['division']:
 		l.append((lambda x: x / int(op.split(id)[1]),op))
-	elif id == '-':
+	elif id == actions['substract']:
 		l.append((lambda x: x - int(op.split(id)[1]),op))
-	elif id == 'A':
+	elif id == actions['append']:
 		l.append((lambda x: x * 10 + int(op.split(id)[1]),op))
-	elif id == 'S':
+	elif id == actions['alter_sign']:
 		l.append((lambda x: -x,'+/-'))
-	elif id == 'X':
+	elif id == actions['exchange']:
 		l.append((lambda x: int(str(x).replace(op[1:].split('->')[0],\
 		op[1:].split('->')[1])),op[1:]))
+	elif id == actions['shift_left']:
+		l.append((lambda x: -((-x - -x%10) // 10) if x < 0 \
+		else (x - x%10) // 10,'<<'))
 
 
 def evaluation(source, stack):
