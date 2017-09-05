@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from sys import argv
+from itertools import
 
 DEBUG = 0
 EXPLORED = 0
