@@ -16,10 +16,24 @@ actions = { 'addition'  :'+', \
             'exchange'  :'X', \
             'append'    :'A', \
             'alter_sign':'S', \
-			'shift_left':'L'
+            'shift_left':'L'
 			}
 
-# Format: +5 -5 *5 /5 X144->50 A5 S L
+def usage():
+	print("Usage: "+argv[0]+" <source> <target> <steps> <op_1> [<op_2> ... <op_n>]")
+	usage = {}
+	usage['addition  '] = "Adds one number. Example: +2"
+	usage['substract '] = "Substracts one number. Example: -5"
+	usage['product   '] = "Multiplies by one number. Examples: *6 , *-2"
+	usage['division  '] = "Divides by one number. Examples: /4 , /-3"
+	usage['exchange  '] = "Replaces the occurrences of some number x for some other y. Examples: X-12:3, X6:-9"
+	usage['append    '] = "Appends a number to another. Example: A5"
+	usage['alter_sign'] = "Is equivalent to multiply by -1. Usage: S"
+	usage['shift_left'] = "Removes the last digit: Usage: L"
+	print("  Operations available:")
+	for k in usage.keys():
+		print('\t'+k,':',usage[k])
+	exit(1)
 
 def addOptionNode(l,op):
 	debug("Adding op "+op)
@@ -37,20 +51,24 @@ def addOptionNode(l,op):
 	elif id == actions['alter_sign']:
 		l.append((lambda x: -x,'+/-'))
 	elif id == actions['exchange']:
-		l.append((lambda x: int(str(x).replace(op[1:].split('->')[0],\
-		op[1:].split('->')[1])),op[1:]))
+		l.append((lambda x: int(str(x).replace(str(int(op[1:].split(':')[0])),\
+		str(int(op[1:].split(':')[1])))),\
+		op[1:].split(':')[0]+'->'+op[1:].split(':')[1]))
 	elif id == actions['shift_left']:
 		l.append((lambda x: -((-x - -x%10) // 10) if x < 0 \
 		else (x - x%10) // 10,'<<'))
+	else:
+		print("Unrecognized operation:", op)
+		raise Exception()
 
 
 def evaluation(source, stack):
-    evaluated = source
-    for op in stack:
-        evaluated = op[0](evaluated)
-    debug("evaluation of source "+str(source)+ " with stack "\
-     + str([op[1] for op in stack]) + " was " + str(evaluated))
-    return evaluated
+	evaluated = source
+	for op in stack:
+		evaluated = op[0](evaluated)
+	debug("evaluation of source "+str(source)+ " with stack "\
+	+ str([op[1] for op in stack]) + " was " + str(evaluated))
+	return evaluated
 
 def printHeader():
     print("Source: " + str(source) + " Target: " + str(target)\
@@ -62,15 +80,25 @@ def collect_operations(opts):
 
 def find_one_solution(opts):
 	for chain in product(opts,repeat=steps):
-		if evaluation(source,chain) == target:
-			return chain
+		try:
+			if evaluation(source,chain) == target:
+				return chain
+		except:
+			debug("exception catched during evaluation: "+str(source)+" "+\
+			str([op[1] for op in chain]))
 	return None
 
 if __name__ == "__main__":
-	source, target, steps = [int(a) for a in argv[1:4]]
-	operations = []
+	if len(argv) < 5:
+		usage()
+	try:
+		source, target, steps = [int(a) for a in argv[1:4]]
+		operations = []
+		collect_operations(operations)
+		print([op[1] for op in operations])
+	except:
+		usage()
 	printHeader()
-	collect_operations(operations)
 	found = find_one_solution(operations)
 	if found is not None:
 		print("--- Target found ---")
