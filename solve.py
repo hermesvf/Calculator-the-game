@@ -1,7 +1,10 @@
+#!/usr/bin/env python3
+
 from sys import argv
 
 DEBUG = 0
 EXPLORED = 0
+source, target, steps = [int(a) for a in argv[1:4]]
 
 def debug(s):
 	if DEBUG == 1:
@@ -15,11 +18,11 @@ actions = { 'addition'  :'+', \
             'exchange'  :'X', \
             'append'    :'A', \
             'alter_sign':'S', \
-			'shift_left':'L'  }
+			'shift_left':'L'
+			}
 
 # Format: +5 -5 *5 /5 X144->50 A5 S
 
-source, target, steps = [int(a) for a in argv[1:4]]
 def addOptionNode(l,op):
 	debug("Adding op "+op)
 	id = op[0]
