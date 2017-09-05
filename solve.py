@@ -95,7 +95,6 @@ if __name__ == "__main__":
 		source, target, steps = [int(a) for a in argv[1:4]]
 		operations = []
 		collect_operations(operations)
-		print([op[1] for op in operations])
 	except:
 		usage()
 	printHeader()
