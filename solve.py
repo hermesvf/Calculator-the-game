@@ -29,7 +29,7 @@ def usage():
 	usage['exchange  '] = "Replaces the occurrences of some number x for some other y. Examples: X-12:3, X6:-9"
 	usage['append    '] = "Appends a number to another. Example: A5"
 	usage['alter_sign'] = "Is equivalent to multiply by -1. Usage: S"
-	usage['shift_left'] = "Removes the last digit: Usage: L"
+	usage['shift_left'] = "Removes the last digit. Usage: L"
 	print("  Operations available:")
 	for k in usage.keys():
 		print('\t'+k,':',usage[k])
@@ -58,8 +58,7 @@ def addOptionNode(l,op):
 		l.append((lambda x: -((-x - -x%10) // 10) if x < 0 \
 		else (x - x%10) // 10,'<<'))
 	else:
-		print("Unrecognized operation:", op)
-		raise Exception()
+		raise Exception("Unrecognized operation:", op)
 
 
 def evaluation(source, stack):
@@ -95,7 +94,8 @@ if __name__ == "__main__":
 		source, target, steps = [int(a) for a in argv[1:4]]
 		operations = []
 		collect_operations(operations)
-	except:
+	except Exception as e:
+		print(repr(e))
 		usage()
 	printHeader()
 	found = find_one_solution(operations)
