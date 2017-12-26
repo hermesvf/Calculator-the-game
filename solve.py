@@ -16,7 +16,8 @@ actions = { 'addition'  :'+', \
             'exchange'  :'X', \
             'append'    :'A', \
             'alter_sign':'S', \
-            'shift_left':'L'
+            'shift_left':'L', \
+			'reverse'   :'R'
 			}
 
 def usage():
@@ -30,6 +31,7 @@ def usage():
 	usage['append    '] = "Appends a number to another. Example: A5"
 	usage['alter_sign'] = "Is equivalent to multiply by -1. Usage: S"
 	usage['shift_left'] = "Removes the last digit. Usage: L"
+	usage['reverse   '] = "Reverses the number digit by digit. Usage: R"
 	print("  Operations available:")
 	for k in usage.keys():
 		print('\t'+k,':',usage[k])
@@ -57,6 +59,8 @@ def addOptionNode(l,op):
 	elif id == actions['shift_left']:
 		l.append((lambda x: -((-x - -x%10) // 10) if x < 0 \
 		else (x - x%10) // 10,'<<'))
+	elif id == actions['reverse']:
+		l.append((lambda x: int(''.join(reversed(str(x)))),'Reverse'))
 	else:
 		raise Exception("Unrecognized operation:", op)
 
